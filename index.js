@@ -5,7 +5,7 @@ const got = require('got');
 
 const app = express()
 const port = 3000
-const baseUrl = 'http://localhost:40057/healthyco/'
+const baseUrl = 'http://ruse.novotika.com/scpacs/healthyco/'
 
 app.use(express.static('public'));
 app.use(express.static('node_modules\\jquery\\dist'));
