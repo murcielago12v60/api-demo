@@ -1,0 +1,19 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dropzone": "^5.7.1",
+    "express": "^4.17.1",
+    "got": "^11.3.0",
+    "jquery": "^3.5.1",
+    "js-base64": "^2.5.2",
+    "jsrsasign": "^8.0.16"
+  }
+}

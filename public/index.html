@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset=utf-8>
+  <title></title>
+  <!-- <link rel="stylesheet" href="stylesheets/style.css"></style> -->
+  
+</head>
+<body>
+    <script src="jquery.js" type="text/javascript"></script>
+    <script src="base64.min.js" type="text/javascript"></script>
+    <script src="dropzone.js" type="text/javascript"></script>
+    <link href="dropzone.css" rel="stylesheet"></style>
+    
+
+    <form>
+        <button id='getUploadId' type="button">Get UploadId</button>
+        <input id='uploadId' type="text" value="1024"></input>
+    </form>
+
+
+    
+    <form>
+        <button id='getToken' type="button">Get token</button>
+        <input id='token' type="text" value=""></input>
+        <input id='tokenValid' type="text"></input>
+    </form>
+
+    <form>
+        <button id='btnOpen' type="button">Open</button>
+    </form>
+
+    <form id="drop_zone" style="" class="dropzone">
+    </form>
+    <!-- <div id="drop_zone" style="width: 400px; height: 250px;background-color: gray;" ondragover="dragOverHandler(event);">
+        <p>Drag one or more files to this Drop Zone ...</p>
+    </div> -->
+      
+    
+
+    <script>
+        const baseUrl = "http://localhost:40057";
+        const apiUrl = baseUrl+"/healthyco";
+        const viewerUrl = baseUrl+"/bg/WebViewer";
+        function dragOverHandler(ev) {
+            ev.preventDefault();
+        }
+
+        function tokenExpired(){
+            const token = $('#token').val();
+            if (token == '') {
+                $('#tokenValid').val('noToken');
+                return true;
+            }
+
+            var payload = token.split('.')[1];
+            //console.log(payload);
+            const obj = JSON.parse(Base64.decode(payload));
+            //console.log(obj);
+            obj.exp;
+
+            const toExp = obj.exp - Date.now()/1000;
+            if (toExp < 1) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        function  getUploadUrl(files) {
+
+            updateToken();
+            var url = apiUrl +"/uploadFile?uploadId="+$('#uploadId').val()
+            +"&jwt_token=" +$('#token').val();
+
+            return url;
+        }
+
+        function updateToken() {
+            if (!tokenExpired())
+                return $('#token').val();
+
+            const id = $('#uploadId').val();
+            $.getJSON({
+                url:"/getToken?uploadId="+id,
+                async:false
+            }, function(data){
+                $('#token').val(data.token);
+            });
+
+            return $('#token').val();
+        }
+
+        Dropzone.autoDiscover = false;
+
+        $(function(){
+
+            let myDropzone = new Dropzone("#drop_zone", {
+                url: getUploadUrl
+            });
+
+            $("#btnOpen").click(function(e) {
+                e.preventDefault();
+
+                updateToken();
+                const url = viewerUrl+'/Open?token='+$('#token').val();
+                window.open(url);
+            })
+
+            $('#getUploadId').click(function(e){
+                e.preventDefault();
+                $.getJSON("/beginUpload", function(data){
+                    $('#uploadId').val(data.UploadId);
+                });
+            });
+        
+
+        
+            $('#getToken').click(function(e){
+                e.preventDefault();
+                updateToken()
+            });
+
+            setInterval(function(){
+                
+                const token = $('#token').val();
+                if (token == '') {
+                    $('#tokenValid').val('noToken');
+                    return;
+                }
+
+                var payload = token.split('.')[1];
+                //console.log(payload);
+                const obj = JSON.parse(Base64.decode(payload));
+                //console.log(obj);
+                obj.exp;
+
+                const toExp = obj.exp - Date.now()/1000;
+                if (toExp < 0) {
+                    $('#tokenValid').val("expired");
+                }
+                else {
+                    $('#tokenValid').val(toExp +'s');
+                }
+            },500)
+        })
+    </script>
+</body>
+</html>
