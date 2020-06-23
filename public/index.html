@@ -40,6 +40,7 @@
 
     <script>
         const baseUrl = "http://ruse.novotika.com/scpacs/";
+        //const baseUrl = 'http://localhost:40057/'
         const apiUrl = baseUrl+"/healthyco";
         const viewerUrl = baseUrl+"/bg/WebViewer";
         function dragOverHandler(ev) {
@@ -71,8 +72,8 @@
         function  getUploadUrl(files) {
 
             updateToken();
-            var url = apiUrl +"/uploadFile?uploadId="+$('#uploadId').val()
-            +"&jwt_token=" +$('#token').val();
+            var url = apiUrl +"/uploadFile?upload="+$('#uploadId').val()
+            +"&token=" +$('#token').val();
 
             return url;
         }
@@ -103,8 +104,9 @@
             $("#btnOpen").click(function(e) {
                 e.preventDefault();
 
+                const id = $('#uploadId').val();
                 updateToken();
-                const url = viewerUrl+'/Open?token='+$('#token').val();
+                const url = viewerUrl+'/Open?test=true&upload='+id+'&token='+$('#token').val();
                 window.open(url);
             })
 

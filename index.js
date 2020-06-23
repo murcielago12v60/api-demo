@@ -6,6 +6,7 @@ const got = require('got');
 const app = express()
 const port = 3000
 const baseUrl = 'http://ruse.novotika.com/scpacs/healthyco/'
+//const baseUrl = 'http://localhost:40057/healthyco/'
 
 app.use(express.static('public'));
 app.use(express.static('node_modules\\jquery\\dist'));
@@ -27,7 +28,7 @@ app.get('/beginUpload', async (req,res) => {
 
 app.get('/getToken', async (req,res) => {
     
-    const url = baseUrl + 'getToken?uploadId='+req.query.uploadId;
+    const url = baseUrl + 'getToken?upload='+req.query.uploadId;
 
     //return await got(url);
      const response = await got(url);
